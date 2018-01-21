@@ -1,15 +1,17 @@
 import server.rpc
 import time
 import uuid
+import re
 
 @server.rpc.HandleRpc('Login')
 def Login(request, response, handler):
+    handler.set_cookie("username", re.sub("[^\w\d_]", "", request.login))
     pass
-    
+
 @server.rpc.HandleRpc('Logout')
 def Logout(request, response, handler):
     server.users.DestroySession(handler)
-       
+
 @server.rpc.HandleRpc('GetGameSessionTicket')
 def GetGameSessionTicket(request, response, handler):
     response.game = request.game
