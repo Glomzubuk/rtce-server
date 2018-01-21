@@ -161,8 +161,8 @@ class Lobby(object):
         game_session = server.models.match.CreateGameSessionRequest(p1.character, p2.character)
         p1port, p2port = server.portal.StartGameSession(game_session, game_config, p1.user, p2.user)
 
-        game_endpoint_config1 = server.models.match.CreateGameEndpointConfig(0, p1port, game_session.spec[0].secret)
-        game_endpoint_config2 = server.models.match.CreateGameEndpointConfig(1, p2port, game_session.spec[1].secret)
+        game_endpoint_config1 = server.models.match.CreateGameEndpointConfig(0, p1port, game_session.spec[0].secret, 1000)
+        game_endpoint_config2 = server.models.match.CreateGameEndpointConfig(1, p2port, game_session.spec[1].secret, 1000)
 
         # send lobby match start events to both players
         event1 = tbmatch.event_pb2.Event()
