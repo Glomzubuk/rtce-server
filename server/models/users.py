@@ -15,7 +15,7 @@ class User(object):
     def __init__(self, username="User"):
         self.user_id = server.GetNextUniqueId()
         self.events = []
-        self.handle = '%s %03d' % (username, self.user_id)
+        self.handle = "{0} #{1}".format(username, self.user_id)
         self.given_name = 'Ana Itza'
         self.locale = 'en-US'
         self.get_event_handler  = None
