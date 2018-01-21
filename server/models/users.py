@@ -15,7 +15,7 @@ class User(object):
     def __init__(self, username="User"):
         self.user_id = server.GetNextUniqueId()
         self.events = []
-        self.handle = '%s %03d' % (username, server.GetNextUniqueId())
+        self.handle = '%s %03d' % (username, self.user_id)
         self.given_name = 'Ana Itza'
         self.locale = 'en-US'
         self.get_event_handler  = None
@@ -74,9 +74,7 @@ class Users(object):
         self.users = {}
 
     def GetRandomUsername(self):
-        list = ["User", "Buttercup", "Foobar", "YungBuck", "Ratchet", "Clank", "Pilot", "FADC", "Cannon", "Rising", "Thunder", "Cloud", "Titan", "PacificRim", "SpecificRim"]
-        choice = random.randrange(len(list))
-        return list[choice]
+        return random.choice(server.config.guest_username)
 
     def GetCurrentUser(self, handler):
         session_key = handler.get_cookie('session')
@@ -86,7 +84,6 @@ class Users(object):
 
     def CreateSession(self, handler, session_key):
         logging.debug('creating new user session with key {0}.'.format(session_key))
-        # logging.debug(handler.get_cookie("username"))
         username = handler.get_cookie("username")
         if len(username) < 3:
             username = self.GetRandomUsername()
