@@ -657,7 +657,7 @@ class GameSession(object):
         self.Log('sending abandoned event to players')
         self.SendMatchAbandoned(self.p1)
         self.SendMatchAbandoned(self.p2)
-        pass
+        self.Close()
 
     def SendVariantChangeReplyCb(self):
         next_config = self.next_game_config.SerializeToString()
