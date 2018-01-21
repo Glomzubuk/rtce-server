@@ -6,15 +6,16 @@ User model definition and registry.
 
 import server
 import logging
+import random
 import tbmatch.event_pb2
 import tbmatch.match_pb2
 import tbrpc.tbrpc_pb2
 
 class User(object):
-    def __init__(self):
+    def __init__(self, username="User"):
         self.user_id = server.GetNextUniqueId()
         self.events = []
-        self.handle = 'User %03d' % server.GetNextUniqueId()
+        self.handle = '%s %03d' % (username, server.GetNextUniqueId())
         self.given_name = 'Ana Itza'
         self.locale = 'en-US'
         self.get_event_handler  = None
@@ -22,7 +23,7 @@ class User(object):
 
     def Log(self, s):
         logging.debug('[user:%d %s] %s' % (self.user_id, self.handle, s))
-        
+
     def SetPlayerPreferences(self, prefs):
         self.prefs.CopyFrom(prefs)
 
@@ -37,7 +38,7 @@ class User(object):
         self.events.append(event)
         self.Log('appending event to list (id:{0})'.format(event.event_id))
 
-        handler = self.get_event_handler 
+        handler = self.get_event_handler
         if handler:
             self.Log('calling pending get event handler to send events')
             self.SendPendingEvents(handler)
@@ -72,6 +73,11 @@ class Users(object):
     def __init__(self):
         self.users = {}
 
+    def GetRandomUsername(self):
+        list = ["User", "Buttercup", "Foobar", "YungBuck", "Ratchet", "Clank", "Pilot", "FADC", "Cannon", "Rising", "Thunder", "Cloud", "Titan", "PacificRim", "SpecificRim"]
+        choice = random.randrange(len(list))
+        return list[choice]
+
     def GetCurrentUser(self, handler):
         session_key = handler.get_cookie('session')
         logging.debug('session key is {0}'.format(session_key))
@@ -80,8 +86,14 @@ class Users(object):
 
     def CreateSession(self, handler, session_key):
         logging.debug('creating new user session with key {0}.'.format(session_key))
+        # logging.debug(handler.get_cookie("username"))
+        username = handler.get_cookie("username")
+        if len(username) < 3:
+            username = self.GetRandomUsername()
+        if len(username) > 20:
+            username = username[:20]
         handler.set_cookie('session', session_key)
-        self.users[session_key] = User()
+        self.users[session_key] = User(username)
 
     def DestroySession(self, handler):
         session_key = handler.get_cookie('session')
