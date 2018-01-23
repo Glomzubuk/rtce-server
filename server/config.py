@@ -21,7 +21,7 @@ def load_config():
     config = ConfigParser.SafeConfigParser()
     if len(config.read("rt.cfg")) == 0:
         build_default_config(config)
-    
+
     return config
 
 def build_default_config(config):
@@ -39,7 +39,7 @@ def build_default_config(config):
     config.set('Network','RPCPort', "1337") # It's 2003 again
     config.set('Network', 'PortalUDPPortBase', "40000")
     config.set('Network', 'MaxPortalUDPPorts', "8192")
- 
+
     config.add_section('Portal')
     config.set('Portal', 'PortalPingCount', "5")
     config.set('Portal', 'GuestUsername', 'Anonymous')
