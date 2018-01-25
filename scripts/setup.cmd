@@ -1,2 +1,2 @@
 :: Install all python dependencies
-python -m pip install grpcio grpcio-tools mako tornado pytest requests ipgetter
+python -m pip install -r ../requirements.txt
