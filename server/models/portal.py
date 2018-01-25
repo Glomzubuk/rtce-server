@@ -19,7 +19,7 @@ import server
 import server.config
 from tornado.platform.auto import set_close_exec
 
-# TODO: this is an in-progress implementation.  
+# TODO: this is an in-progress implementation.
 
 PORTAL_VERSION = 0x8012
 
@@ -95,7 +95,7 @@ class SocketServer(object):
     def Log(self, s):
         logging.debug('[%s port %s] %s' % (self.name, self.port, s))
 
-    def StopServing(self):      
+    def StopServing(self):
         self.Log('stopping socket server')
         server.ioloop.remove_handler(self.sock.fileno())
         self.sock.close()
@@ -115,24 +115,24 @@ class SocketServer(object):
             self.peer_addr = addr
             self.OnRead(data, addr)
             break
-    
+
     def OnRead(self, data, addr):
         # print 'got %d bytes from %s' % (len(data), str(addr))
         header, payload = data[:3], data[3:]
-        version, msg = struct.unpack('HB', header)        
+        version, msg = struct.unpack('HB', header)
 
         if msg not in THROTTLE_MSG_LOGS:
             self.Log('recv version:0x%0x, msg:%s payload len:%d' % (version, MSGS.get(msg, str(msg)), len(payload)))
 
         if version != PORTAL_VERSION:
             return
-        
+
         self.OnPayload(msg, payload, addr)
-    
+
     def SendTo(self, addr, msg, payload):
         hdr = struct.pack('HB', PORTAL_VERSION, msg)
         self.Log('send version:0x%0x, msg:%s payload len:%d' % (PORTAL_VERSION, MSGS.get(msg, str(msg)), len(payload)))
-        self.sock.sendto(hdr + payload, addr)        
+        self.sock.sendto(hdr + payload, addr)
 
 class TimerStore(object):
     def __init__(self, logcb):
@@ -157,7 +157,7 @@ class TimerStore(object):
         self.timers[name] = server.ioloop.add_timeout(timeout, callback)
 
     def Stop(self, name):
-        self.logcb('stopping timer {0}'.format(name))       
+        self.logcb('stopping timer {0}'.format(name))
         timer = self.timers.get(name)
         if timer:
             server.ioloop.remove_timeout(timer)
@@ -165,7 +165,7 @@ class TimerStore(object):
 
     def StopAll(self):
         for name, timer in self.timers.iteritems():
-            self.logcb('stopping timer {0}'.format(name))       
+            self.logcb('stopping timer {0}'.format(name))
             server.ioloop.remove_timeout(timer)
         self.timers = {}
 
@@ -183,7 +183,7 @@ class GameChannel(SocketServer):
         self.got_new_variants = False
         self.need_another_game = False
         self.handshake_random = None
-        self.handshake_status = None        
+        self.handshake_status = None
         self.sender = None
         self.mapped_port = None
         self.local_address = None
@@ -202,10 +202,10 @@ class GameChannel(SocketServer):
     def StopServing(self):
         SocketServer.StopServing(self)
         self.report_timeout_timer.stop()
-        
+
     def OnPayload(self, msg, payload, addr):
         self.session.OnPayload(self, msg, payload, addr)
-    
+
     def IsConnected(self):
         return self.connected
 
@@ -287,7 +287,7 @@ class GameChannel(SocketServer):
         except:
             log.Error('invalid proto for variant change.')
             return False
-    
+
         if new_char_spec.type_name != self.character_spec.type_name:
             self.Log('variant change: invalid attempt to change character')
             return False
@@ -308,12 +308,12 @@ class GameChannel(SocketServer):
         if self.active and not self.inactive_timeout_timer:
             timeout_ms = server.config.game_session_config.handshake_reply_interval_ms
             self.inactive_timeout_timer = server.ioloop.add_timeout(datetime.timedelta(milliseconds=timeout_ms), lambda: self.InactiveTimeoutCb())
-            
+
     def StopInactiveTimeout(self):
         if self.inactive_timeout_timer:
             server.ioloop.remove_timeout(self.inactive_timeout_timer)
             self.inactive_timeout_timer = None
-            
+
     def InactiveTimeoutCb(self):
         self.Log('inactive timeout fired')
         self.session.NotifyTimeout(INACTIVE_DISCONNECT)
@@ -351,13 +351,13 @@ class GameChannel(SocketServer):
         else:
             if self.last_game_report.draw:
                 self.claimed_draws += 1
-        
+
         games_to_win = server.config.game_session_config.games_to_win
         max_games = games_to_win * 2 - 1
         if self.claimed_wins > games_to_win or self.claimed_losses > games_to_win or self.GetClaimedFinished() > max_games:
            self.Log('goodbye: too many games reported (wins:{0} losses:{1} draws:{2}'.format(self.claimed_wins, self.claimed_losses, self.claimed_draws))
            return GOODBYE_INVALID
-    
+
         result = GOODBYE_INVALID
         if self.claimed_wins == games_to_win or self.claimed_losses == games_to_win or self.GetClaimedFinished() == max_games:
             result = GOODBYE_MATCH_OVER
@@ -399,14 +399,14 @@ class GameSession(object):
     def OnPayload(self, channel, msg, payload, addr):
         if self.state not in [STATE_HANDSHAKE, STATE_HANDSHAKE_REPORT, STATE_GAME, STATE_GAME_PENDING, STATE_CLOSING, STATE_TIMED_OUT]:
             return
-        
+
         if channel == self.p1:
             recv_channel  = self.p1
             other_channel = self.p2
         else:
             recv_channel  = self.p2
             other_channel = self.p1
-            
+
         if msg not in THROTTLE_MSG_LOGS:
             self.Log('received {0} msg in state {1} from {2}'.format(MSGS.get(msg, str(msg)), self.state, recv_channel.slot))
 
@@ -423,7 +423,7 @@ class GameSession(object):
             if recv_channel.ValidateHandshakeReport(payload, addr):
                 if other_channel.IsHandshakeReported():
                     other_handshake_status = other_channel.GetHandshakeStatus()
-                    recv_handshake_status = recv_channel.GetHandshakeStatus() 
+                    recv_handshake_status = recv_channel.GetHandshakeStatus()
                     if other_handshake_status != recv_handshake_status:
                         logging.error('handshake status disagree: {0}, {1}', recv_handshake_status, other_handshake_status)
                         self.NotifyTimeout(HANDSHAKE_TIMEOUT)
@@ -434,7 +434,7 @@ class GameSession(object):
                         return
                     elif recv_handshake_status == tbportal.portal_pb2.GameSessionReport.HIGH_PING:
                         logging.debug('handshake failed due to high ping')
-                    
+
                     self.handshake_status = recv_handshake_status
                     self.NotifyTimeout(HANDSHAKE_FAIL)
         elif self.state == STATE_GAME:
@@ -452,7 +452,7 @@ class GameSession(object):
                 frame_count, ping_ms, max_ping_ms, min_ping_ms, fps = struct.unpack('IHHHH', payload)
                 recv_channel.AddProgressReport(frame_count, ping_ms, max_ping_ms, min_ping_ms, fps)
                 return
-            elif msg == MSG_GOODBYE:                
+            elif msg == MSG_GOODBYE:
                 self.HandleGoodbyeInGame(recv_channel, other_channel, payload)
                 return
 
@@ -461,7 +461,7 @@ class GameSession(object):
             if recv_channel.game_recv_count > 0 and other_channel.game_recv_count > 0:
                 logging.debug('game running.  end var change reply')
                 self.CancelHandshakeComplete()
-                
+
         elif self.state == STATE_GAME_PENDING:
             # aknowledge packet no matter what, since the channel is active
             recv_channel.PacketReceived(False)
@@ -495,9 +495,9 @@ class GameSession(object):
     def HandleInput(self, channel, payload):
         # this is where we'd do spectator stuff
         pass
-    
+
     def HandleGoodbyeInGame(self, recv_channel, other_channel, payload):
-        result = recv_channel.ValidateGoodBye(payload)        
+        result = recv_channel.ValidateGoodBye(payload)
         if result == GOODBYE_MATCH_OVER:
             if other_channel.need_another_game:
                 self.AddGameToMatchRecord()
@@ -524,7 +524,7 @@ class GameSession(object):
             # that triggered the move to CLOSING state.
             return
 
-        result = recv_channel.ValidateGoodBye(payload)        
+        result = recv_channel.ValidateGoodBye(payload)
         if result == GOODBYE_MATCH_OVER:
             if self.AddGameToMatchRecord():
                 # at this point we trust that the clients reported things correctly
@@ -561,7 +561,7 @@ class GameSession(object):
         gameOverEvent.game_over.match_id = self.match_id
         gameOverEvent.game_over.report.CopyFrom(channel.last_game_report)
         channel.user.SendEvent(gameOverEvent)
-        
+
     def SendMatchOver(self, channel):
         matchOverEvent = tbmatch.event_pb2.Event()
         matchOverEvent.type = tbmatch.event_pb2.Event.E_MATCH_OVER
@@ -576,7 +576,7 @@ class GameSession(object):
         matchAbandonedEvent.type = tbmatch.event_pb2.Event.E_MATCH_ABANDONED
         matchAbandonedEvent.match_abandoned.match_id = self.match_id
         channel.user.SendEvent(matchAbandonedEvent)
-        
+
     def ExitGame(self):
         self.successful_match = True
         self.TransitionToState(STATE_TIMED_OUT)
@@ -631,11 +631,11 @@ class GameSession(object):
             self.timers.Stop('goodbye')
         elif state == STATE_GAME_PENDING:
             self.timers.Stop('variant_change')
-    
+
     def SendHandshakeReplyCb(self):
         self.p1.SendHandshakeReply(self.p2)
         self.p2.SendHandshakeReply(self.p1)
-        
+
         max_handshake_replies = server.config.game_session_config.max_handshake_replies
         self.handshake_reply_count += 1
         self.Log('got handshake reply %d of %d' % (self.handshake_reply_count, max_handshake_replies))
@@ -652,7 +652,7 @@ class GameSession(object):
         if self.send_handshake_reply_timer:
             server.ioloop.remove_timeout(self.send_handshake_reply_timer)
             self.send_handshake_reply_timer = None
-        
+
     def NotifyTimeout(self, reason):
         self.Log('sending abandoned event to players')
         self.SendMatchAbandoned(self.p1)
@@ -673,7 +673,7 @@ class GameSession(object):
         else:
             self.Log('timeout variant change reply')
 
-    
+
     def VariantsChangeTimeoutCb(self):
         self.next_game_config = tbmatch.match_pb2.NextGameConfig()
         self.next_game_config.character_spec.add().CopyFrom(self.p1.character_spec)
@@ -723,7 +723,7 @@ class PingTest(SocketServer):
         secret, client_rand = struct.unpack('QH', payload)
         if self.client_spec.secret != secret:
             return
-        
+
         self.state = 'test'
         self.sender = addr
         self.last_client_rand = client_rand
@@ -746,7 +746,7 @@ class PingTest(SocketServer):
         if self.send_count >= len(self.records):
             # Done sending. Timeout after one more wait timeout
             return
-                
+
         record = self.records[self.send_count]
         server_random = record['rand']
         record['sent'] = time.time()
@@ -784,5 +784,3 @@ class Portal(object):
         assert server.port
         server.StopServing()
         self.socket_servers[server.port] = None
-
-

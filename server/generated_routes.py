@@ -12,6 +12,7 @@ See server/rpc.py for more information.
 
 import server.rpc
 import tornado.web
+import logging
 
 import tbadmin.account_pb2
 import tbadmin.audit_pb2
@@ -2062,7 +2063,16 @@ class GetAccountBalanceHandler(tornado.web.RequestHandler):
         result.result = tbrpc.tbrpc_pb2.S_SUCCESS
         result.content = response.SerializeToString()
         self.write(result.SerializeToString())
-
+class GetUserCountHandler(tornado.web.RequestHandler):
+    def get(self):
+        count = len(server.users.users)
+        logging.debug(count)
+        self.write(str(count))
+class GetUsersInRankedCountHandler(tornado.web.RequestHandler):
+    def get(self):
+        count = len(server.matchmaker.queue_users)
+        logging.debug(count)
+        self.write(str(count))
 
 def GetRoutes():
     """
@@ -2169,4 +2179,6 @@ def GetRoutes():
         (r'/_01/rpc/GetAccountOrderHistory', GetAccountOrderHistoryHandler),
         (r'/_01/rpc/GetAccountBalanceHistory', GetAccountBalanceHistoryHandler),
         (r'/_01/rpc/GetAccountBalance', GetAccountBalanceHandler),
+        (r'/_01/rpc/GetUserCount', GetUserCountHandler),
+        (r'/_01/rpc/GetUsersInRankedCount', GetUsersInRankedCountHandler),
     ]
