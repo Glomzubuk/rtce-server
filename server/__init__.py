@@ -33,7 +33,7 @@ def Start():
     routes = server.generated_routes.GetRoutes()
     routes.append((r'/_01/rpc/GetEvent', server.services.event_service.GetEventHandler))
     app.add_handlers(r'.*', routes) 
-    app.listen(server.config.port)
+    app.listen(server.config.port, xheaders=True)
     ioloop.start()
     
 
