@@ -85,7 +85,7 @@ class Users(object):
     def CreateSession(self, handler, session_key):
         logging.debug('creating new user session with key {0}.'.format(session_key))
         username = handler.get_cookie("username")
-        if len(username) < 3:
+        if username is None or len(username) < 3:
             username = self.GetRandomUsername()
         if len(username) > 20:
             username = username[:20]
