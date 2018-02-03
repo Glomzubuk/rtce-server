@@ -33,7 +33,21 @@ def Start():
     routes = server.generated_routes.GetRoutes()
     routes.append((r'/_01/rpc/GetEvent', server.services.event_service.GetEventHandler))
     app.add_handlers(r'.*', routes) 
-    app.listen(server.config.port, xheaders=True)
+
+    # Set the default SSL options to blank.
+    ssl_options = None
+
+    # Check if SSL is configured
+    if config.ssl_cert_file and config.ssl_key_file:
+        ssl_options = {"certfile": config.ssl_cert_file, "keyfile": config.ssl_key_file}
+
+    # Start HTTP server
+    http_server = tornado.httpserver.HTTPServer(app, ssl_options=ssl_options)
+    http_server.listen(server.config.port)
+    if ssl_options:
+        tornado.log.logging.info("https://{0}:{1}/_01/".format(server.config.hostname,server.config.port))
+    else:
+        tornado.log.logging.info("http://{0}:{1}/_01/".format(server.config.hostname,server.config.port))
     ioloop.start()
     
 

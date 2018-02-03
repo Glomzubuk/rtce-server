@@ -39,6 +39,8 @@ def build_default_config(config):
     config.set('Network','RPCPort', "1337") # It's 2003 again
     config.set('Network', 'PortalUDPPortBase', "40000")
     config.set('Network', 'MaxPortalUDPPorts', "8192")
+    config.set('Network', 'SSLCertFile', "")
+    config.set('Network', 'SSLKeyFile', "")
 
     config.add_section('Portal')
     config.set('Portal', 'PortalPingCount', "5")
@@ -69,6 +71,10 @@ port = config.getint('Network', 'RPCPort')
 # The UDP port on this server that clients can use for ping testing.
 portal_port_base = config.getint('Network', 'PortalUDPPortBase')
 portal_port_range = config.getint('Network', 'MaxPortalUDPPorts')
+
+# Certificates for HTTPS
+ssl_cert_file = config.get('Network', 'SSLCertFile')
+ssl_key_file  = config.get('Network', 'SSLKeyFile')
 
 # number of times to ping for the ping test
 portal_ping_count = config.getint('Portal','PortalPingCount')
