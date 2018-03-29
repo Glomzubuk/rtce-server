@@ -8,11 +8,10 @@ import hashlib
 def Login(request, response, handler):
     handler.set_cookie("username", re.sub("[^\w\d_]", "", request.login))
     if request.password and server.config.tripcode_enabled:
-        handler.set_cookie("password", re.sub("[^\w\d_]", "",hashlib.sha256(request.login + request.password).hexdigest())
+        handler.set_cookie("password", re.sub("[^\w\d_]", "",hashlib.sha256(request.login + request.password).hexdigest()))
 
     # Uncomment later when we have actual auth.
     #handler.set_cookie("password", re.sub("[^\w\d_]", "", request.password))
-    pass
 
 @server.rpc.HandleRpc('Logout')
 def Logout(request, response, handler):
