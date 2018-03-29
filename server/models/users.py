@@ -10,16 +10,24 @@ import random
 import tbmatch.event_pb2
 import tbmatch.match_pb2
 import tbrpc.tbrpc_pb2
+import hmac
+import hashlib
 
 class User(object):
-    def __init__(self, username="User"):
+    def __init__(self, username="User", password=None):
         self.user_id = server.GetNextUniqueId()
         self.events = []
-        self.handle = "{0} #{1}".format(username, self.user_id)
+
+        if server.config.tripcode_enabled and password:
+            tripcode = hmac.new(server.config.tripcode_salt if server.config.tripcode_salt else "", password, hashlib.sha256).hexdigest()[0:8]                
+            self.handle = "{0} !{1}".format(username, tripcode)
+        else:
+            self.handle = "{0} #{1}".format(username, self.user_id)
         self.given_name = 'Ana Itza'
         self.locale = 'en-US'
         self.get_event_handler  = None
         self.prefs = tbmatch.match_pb2.PlayerPreferences()
+        print self.handle
 
     def Log(self, s):
         logging.debug('[user:%d %s] %s' % (self.user_id, self.handle, s))
@@ -85,12 +93,13 @@ class Users(object):
     def CreateSession(self, handler, session_key):
         logging.debug('creating new user session with key {0}.'.format(session_key))
         username = handler.get_cookie("username")
+        password = handler.get_cookie("password")
         if username is None or len(username) < 3:
             username = self.GetRandomUsername()
         if len(username) > 20:
             username = username[:20]
         handler.set_cookie('session', session_key)
-        self.users[session_key] = User(username)
+        self.users[session_key] = User(username, password)
 
     def DestroySession(self, handler):
         session_key = handler.get_cookie('session')

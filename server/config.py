@@ -45,6 +45,8 @@ def build_default_config(config):
     config.add_section('Portal')
     config.set('Portal', 'PortalPingCount', "5")
     config.set('Portal', 'GuestUsername', 'Anonymous')
+    config.set('Portal', 'UseTripCodes', "False")
+    config.set('Portal', 'TripcodeSecureSalt', "CHANGETHIS")
 
     config.add_section('GameSession')
     config.set('GameSession','RankedMatchRounds', "2")
@@ -75,6 +77,10 @@ portal_port_range = config.getint('Network', 'MaxPortalUDPPorts')
 # Certificates for HTTPS
 ssl_cert_file = config.get('Network', 'SSLCertFile')
 ssl_key_file  = config.get('Network', 'SSLKeyFile')
+
+# Tripcodes so we use 4chan style !whrdasfd based on password.
+tripcode_enabled = config.get('Portal', 'UseTripCodes')
+tripcode_salt = config.get('Portal', 'TripcodeSecureSalt')
 
 # number of times to ping for the ping test
 portal_ping_count = config.getint('Portal','PortalPingCount')
