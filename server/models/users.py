@@ -14,6 +14,7 @@ import hmac
 import hashlib
 import requests
 from webhook_sender import WebhookHandler
+from geoip import geolite2
 
 class User(object):
     def __init__(self, username="User", password=None, ip=None):
@@ -27,9 +28,17 @@ class User(object):
             self.handle = "{0} #{1}".format(username, self.user_id)
         self.given_name = 'Ana Itza'
         self.locale = 'en-US'
+        self.country = None
+        if ip is not None:
+            try:
+                match = geolite2.lookup(ip)
+                if match:
+                    self.country = match.country
+
         self.get_event_handler  = None
         self.prefs = tbmatch.match_pb2.PlayerPreferences()
-        self.ip
+        self.ip = ip
+
 
     def Log(self, s):
         logging.debug('[user:%d %s] %s' % (self.user_id, self.handle, s))
@@ -95,7 +104,6 @@ class Users(object):
 
     def CreateSession(self, handler, session_key, user_address = None):
         logging.debug('creating new user session with key {0}.'.format(session_key))
-        handler.
         username,password = handler.get_cookie("user_info").split("|")
         if username is None or len(username) < 3:
             username = self.GetRandomUsername()
