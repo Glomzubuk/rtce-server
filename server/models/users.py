@@ -13,7 +13,7 @@ import tbrpc.tbrpc_pb2
 import hmac
 import hashlib
 import requests
-from webhook_sender import WebhookHandler
+from server.webhook_handler import WebhookHandler
 from geoip import geolite2
 
 class User(object):
