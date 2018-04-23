@@ -20,8 +20,13 @@ class WebhookHandler(object):
     def SendLogin(self, user, users=0):
         if config.webhook_user_logged_in:
             info = defaultdict(dict)
+            emoji = unicode(user.country)
+            try:
+                emoji = lookup(user.country_code)
+            except:
+                pass
             info["title"] = "A user has logged in!"
-            info["description"] = u"Player {0} representing {1} has joined the {2} others.".format(user.handle, user.country, users)
+            info["description"] = u"Player {0} representing {1} has joined the {2} others.".format(user.handle, emoji, users)
             info["provider"]["name"] = "RT Community Server"
             info["provider"]["url"] = "https://risingthunder.community"
             self.session.post(config.webhook_user_logged_in,json={"embeds":[info]})
