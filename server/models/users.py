@@ -29,7 +29,7 @@ class User(object):
             self.handle = "{0} #{1}".format(username, self.user_id)
         self.given_name = 'Ana Itza'
         self.locale = 'en-US'
-        self.country = "ZZ"
+        self.country = "Parts Unknown"
         if ip is not None:
             try:
                 match = geolite2.lookup(ip)
