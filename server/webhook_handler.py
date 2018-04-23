@@ -1,7 +1,7 @@
 import config
 from collections import defaultdict
 from requests_futures.sessions import Session
-from flags.lookup import lookup
+from emojiflags.lookup import lookup
 import logging
 
 class Singleton(type):
