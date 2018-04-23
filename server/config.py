@@ -97,3 +97,8 @@ game_session_config.handshake_reply_interval_ms = config.getint('GameSession', '
 
 # Enabled features.
 featureSet = tbmatch.match_pb2.ClientFeatureSet()
+
+# Webhook Features
+webhook_match_over = config.get('Webhook','MatchOver')
+webhook_user_logged_in = config.get('Webhook','UserLoggedIn')
+webhook_user_in_matchmaking = config.get('Webhook','InMatchmaking')

@@ -12,9 +12,11 @@ import tbmatch.match_pb2
 import tbrpc.tbrpc_pb2
 import hmac
 import hashlib
+import requests
+from webhook_sender import WebhookHandler
 
 class User(object):
-    def __init__(self, username="User", password=None):
+    def __init__(self, username="User", password=None, ip=None):
         self.user_id = server.GetNextUniqueId()
         self.events = []
 
@@ -27,7 +29,7 @@ class User(object):
         self.locale = 'en-US'
         self.get_event_handler  = None
         self.prefs = tbmatch.match_pb2.PlayerPreferences()
-        print self.handle
+        self.ip
 
     def Log(self, s):
         logging.debug('[user:%d %s] %s' % (self.user_id, self.handle, s))
@@ -80,6 +82,7 @@ class User(object):
 class Users(object):
     def __init__(self):
         self.users = {}
+        self.webhook = WebhookHandler()
 
     def GetRandomUsername(self):
         return random.choice(server.config.guest_username)
@@ -90,19 +93,22 @@ class Users(object):
         if session_key:
             return self.users[session_key]
 
-    def CreateSession(self, handler, session_key):
+    def CreateSession(self, handler, session_key, user_address = None):
         logging.debug('creating new user session with key {0}.'.format(session_key))
+        handler.
         username,password = handler.get_cookie("user_info").split("|")
         if username is None or len(username) < 3:
             username = self.GetRandomUsername()
         if len(username) > 20:
             username = username[:20]
         handler.set_cookie('session', session_key)
-        self.users[session_key] = User(username, password)
+        self.users[session_key] = User(username, password, user_address)
+        if config.webhook_user_logged_in:
+            self.webhook.SendLogin(self.users[session_key], len(self.users))     
 
     def DestroySession(self, handler):
         session_key = handler.get_cookie('session')
         if session_key:
             user = self.users[session_key]
             logging.debug('destroying session for {0} {1}.'.format(session_key, user.handle))
-            del self.users[session_key]
+            self.users.pop(session_key, None)

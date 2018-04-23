@@ -24,4 +24,4 @@ def RedeemGameSessionTicket(request, response, handler):
     # TODO:  Remove this sleep statement and instead implement an asynchronous event handler in the same style as GetEvent
     time.sleep(server.config.game_session_ticket_wait_interval_ms)
     session_key = request.nonce
-    server.users.CreateSession(handler, session_key)
+    server.users.CreateSession(handler, session_key, request.remote_ip)
