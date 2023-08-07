@@ -5,7 +5,7 @@ config.py
 import ConfigParser
 import os
 import socket
-import ipgetter
+#import ipgetter2
 import tbmatch.match_pb2
 import tbportal.portal_pb2
 
@@ -13,7 +13,8 @@ import tbportal.portal_pb2
 
 def get_external_ip():
     try:
-        return ipgetter.myip()
+#        return ipgetter2.myip()
+        return None
     except:
         return None
 
