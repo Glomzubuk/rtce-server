@@ -1,4 +1,4 @@
-# Usage: scripts\generate_protos.cmd
+# Usage: scripts/generate_protos.cmd
 #
 # Generate the python protobuf implementation
 

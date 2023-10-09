@@ -41,6 +41,7 @@ def CreateGameConfig(match_id, p1, p1_character, p2, p2_character):
 
     return game_config
 
+#POI ping threshold
 def CreateGameEndpointConfig(slot, port, secret, ping_score_threshold = 200):
     game_endpoint_config = tbmatch.match_pb2.GameEndpointConfig()
     game_endpoint_config.slot = slot
