@@ -1,3 +1,4 @@
+syntax = "proto2";
 // Order processing and administration.
 
 package tbadmin;

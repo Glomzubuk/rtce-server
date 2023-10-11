@@ -1,3 +1,4 @@
+syntax = "proto2";
 // Matching service.
 //
 // Maintains a set of active rooms, each of which

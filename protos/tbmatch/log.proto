@@ -1,3 +1,4 @@
+syntax = "proto2";
 // For reporting and aggregating log messages pertaining to matches.
 
 package tbmatch;

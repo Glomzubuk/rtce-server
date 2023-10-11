@@ -1,3 +1,4 @@
+syntax = "proto2";
 // Services related to management of user account data.
 
 

@@ -1,3 +1,4 @@
+syntax = "proto2";
 // Service to handle shopping and payments.
 
 package tbmatch;

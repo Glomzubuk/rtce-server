@@ -1,3 +1,4 @@
+syntax = "proto2";
 // For sending logs and crash dumps to the server for storage
 
 import "tbrpc/tbrpc.proto";

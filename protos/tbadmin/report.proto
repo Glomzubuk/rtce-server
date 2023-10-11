@@ -1,3 +1,4 @@
+syntax = "proto2";
 package tbadmin;
 
 import "tbrpc/tbrpc.proto";

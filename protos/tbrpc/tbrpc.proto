@@ -1,3 +1,4 @@
+syntax = "proto2";
 // RPC transport layer encapsulation.
 
 import "google/protobuf/descriptor.proto";
