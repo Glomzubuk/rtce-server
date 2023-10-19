@@ -4,6 +4,7 @@ portal.py
 The portal is a UDP / TCP endpoint used for ping test and spectator support.`
 """
 
+import binascii
 import time
 import errno
 import socket
@@ -258,7 +259,12 @@ class GameChannel(SocketServer):
     def ValidateHandshakeReport(self, payload, addr):
         assert self.handshake_status == None
 
-        handshake_status, min_ping_ms, avg_ping_ms, max_ping_ms = struct.unpack('<BHHH', payload)
+        try:
+            handshake_status, min_ping_ms, avg_ping_ms, max_ping_ms = struct.unpack('<BHHH', payload)
+        except Exception as e:
+            logging.debug(e)
+            logging.debug(binascii.hexlify(payload))
+            return False
         self.handshake_status = handshake_status
         self.report_timeout_timer.stop()
         return True
@@ -765,6 +771,7 @@ class Portal(object):
         return self.free_ports.pop(0)
 
     def ReleasePort(self, port):
+        traceback.print_stack()
         self.free_ports.append(port)
 
     def StartPingTest(self, user, client_spec):
