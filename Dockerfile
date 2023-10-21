@@ -2,7 +2,7 @@
 FROM python:2
 
 EXPOSE 1337
-EXPOSE 40000-48192
+#EXPOSE 40000-40128
 
 WORKDIR /usr/src/app
 
@@ -24,4 +24,4 @@ RUN mkdir tests; \
 COPY ./server ./server
 
 
-CMD [ "python", "rtd.py", "--logging=debug" ]
+CMD [ "python", "rtd.py" ]

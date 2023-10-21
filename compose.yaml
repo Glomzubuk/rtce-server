@@ -1,0 +1,22 @@
+services:
+  rtce-serv:
+    image: rtce-server
+    build: .
+    env_file:
+      - env.list
+    network_mode: host
+    logging:
+      options:
+        max-size: 10m
+        max-file: 3
+        compress: "true"
+    restart: on-failure
+    stop_grace_period: 1s
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+  rtce-serv-dbg:
+    extends:
+      service: rtce-serv
+    command: [ "python", "rtd.py", "--logging=debug" ]
