@@ -12,6 +12,7 @@ services:
         compress: "true"
     restart: on-failure
     stop_grace_period: 1s
+    tty: true
     deploy:
       resources:
         limits:
@@ -19,4 +20,5 @@ services:
   rtce-serv-dbg:
     extends:
       service: rtce-serv
+    profiles: ["debug"]
     command: [ "python", "rtd.py", "--logging=debug" ]
