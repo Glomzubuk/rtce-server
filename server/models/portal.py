@@ -86,7 +86,7 @@ class SocketServer(object):
         self.port = portal.AcquirePort()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.setblocking(0)
+        self.sock.setblocking(False)
         self.sock.bind((server.config.hostname, self.port))
         set_close_exec(self.sock.fileno())
 
@@ -366,8 +366,8 @@ class GameChannel(SocketServer):
         games_to_win = server.config.game_session_config.games_to_win
         max_games = games_to_win * 2 - 1
         if self.claimed_wins > games_to_win or self.claimed_losses > games_to_win or self.GetClaimedFinished() > max_games:
-           self.Log('goodbye: too many games reported (wins:{0} losses:{1} draws:{2}'.format(self.claimed_wins, self.claimed_losses, self.claimed_draws))
-           return GOODBYE_INVALID
+            self.Log('goodbye: too many games reported (wins:{0} losses:{1} draws:{2}'.format(self.claimed_wins, self.claimed_losses, self.claimed_draws))
+            return GOODBYE_INVALID
 
         result = GOODBYE_INVALID
         if self.claimed_wins == games_to_win or self.claimed_losses == games_to_win or self.GetClaimedFinished() == max_games:
