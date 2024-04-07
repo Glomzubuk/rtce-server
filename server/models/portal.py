@@ -4,6 +4,8 @@ portal.py
 The portal is a UDP / TCP endpoint used for ping test and spectator support.`
 """
 
+import sys
+import traceback
 import binascii
 import time
 import errno
@@ -150,6 +152,8 @@ class TimerStore(object):
         self.logcb('starting timer {0}'.format(name))
         self.Stop(name)
         timeout = datetime.timedelta(milliseconds=timeout_ms)
+        logging.debug("stacktrace for TimerStore Start")
+        traceback.print_stack()
 
         def callback():
             self.logcb('firing timer {0}'.format(name))
