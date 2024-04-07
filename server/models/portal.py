@@ -70,6 +70,7 @@ STATE_CLOSING = 'STATE_CLOSING'
 STATE_CLOSED = 'STATE_CLOSED'
 STATE_TIMED_OUT = 'STATE_TIMED_OUT'
 
+HANDSHAKE_FAIL = 'HANDSHAKE_FAIL'
 HANDSHAKE_TIMEOUT = 'HANDSHAKE_TIMEOUT'
 INACTIVE_DISCONNECT = 'INACTIVE_DISCONNECT'
 GOODBYE_DISCONNECT = 'GOODBYE_DISCONNECT'
@@ -444,6 +445,10 @@ class GameSession(object):
                         return
                     elif recv_handshake_status == tbportal.portal_pb2.GameSessionReport.HIGH_PING:
                         logging.debug('handshake failed due to high ping')
+                    elif recv_handshake_status == tbportal.portal_pb2.GameSessionReport.UNREACHABLE:
+                        logging.debug('handshake failed because no routes could be found to the opponent')
+                    else:
+                        logging.debug('handshake failed for unknown reasons')
 
                     self.handshake_status = recv_handshake_status
                     self.NotifyTimeout(HANDSHAKE_FAIL)
