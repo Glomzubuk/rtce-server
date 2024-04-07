@@ -296,7 +296,7 @@ class GameChannel(SocketServer):
         try:
             new_char_spec.ParseFromString(payload[2:2+variants_size])
         except:
-            log.Error('invalid proto for variant change.')
+            logging.error('invalid proto for variant change.')
             return False
 
         if new_char_spec.type_name != self.character_spec.type_name:
@@ -350,7 +350,7 @@ class GameChannel(SocketServer):
         try:
             self.last_game_report.ParseFromString(payload[2:2+outcome_size])
         except:
-            log.Error('goodbye: invalid proto for game report.')
+            logging.error('goodbye: invalid proto for game report.')
             return GOODBYE_INVALID
 
         if self.last_game_report.win_slot in [0, 1]:
