@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:2
+FROM python:2.7.18-slim
 
 EXPOSE 1337
 #EXPOSE 40000-40128

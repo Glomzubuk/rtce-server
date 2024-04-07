@@ -16,9 +16,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 80M
+          memory: 160M
   rtce-serv-dbg:
     extends:
       service: rtce-serv
-    profiles: ["debug"]
     command: [ "python", "rtd.py", "--logging=debug" ]
